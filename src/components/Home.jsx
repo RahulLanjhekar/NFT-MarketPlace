@@ -1,17 +1,62 @@
+import { useEffect, useState } from 'react';
 import Card from './Card';
+import Loader from './Loader';
 
-const Home = () => {
+const Home = ({ marketPlace, nft }) => {
     
+  const [loading, setLoading] = useState(true)
+  const [items, setItems] = useState([])
+  const loadMarketplaceItems = async () => {
+
+    const itemCount = await marketPlace.itemCount()
+    let items = []
+    for (let i = 1; i <= itemCount; i++) {
+      const item = await marketPlace.items(i)
+      if (!item.sold) {
+      
+        const totalPrice = await marketPlace.getTotalPrice(item.itemId)
+
+        items.push({
+          totalPrice,
+          itemId: item.itemId,
+          seller: item.seller,
+          name: item.name,
+          desc: item.desc,
+          image: item.image
+        })
+      }
+    }
+    setLoading(false)
+    setItems(items)
+  }
+
+  const buyMarketItem = async (item) => {
+    await (await marketPlace.purchaseItem(item.itemId, { value: item.totalPrice })).wait()
+    loadMarketplaceItems()
+  }
+
+  useEffect(() => {
+    loadMarketplaceItems()
+  }, [])
+
+  if (loading) return (
+    <Loader />
+  )
   return (
-    <div className="flex flex-wrap justify-center items-center mt-10">
-        <Card title="Road & Water" eth="0.5"
-        img='https://images.unsplash.com/photo-1662505475505-cc7396a70a0c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1032&q=80' />
-        <Card title="Porsche" eth="0.3" 
-        img={"https://images.unsplash.com/photo-1662569258854-7fae360ac63f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw1fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=500&q=60"}/>
-        <Card title="Iceland" eth="0.6"
-        img={"https://images.unsplash.com/photo-1662622249257-4ffe08123e12?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=500&q=60"}/>
-        
-    </div>
+    <>
+      { items.length > 0 ? 
+        <div className="flex flex-wrap justify-center items-center mt-10">
+          { items.map((item, ind) => (
+            <Card item = {item} key={ind} buyMarketItem={buyMarketItem} />
+          ))}
+        </div>
+    : (
+          <main className="flex justify-center items-center text-xl mt-[100px]">
+            <h1>No listed assets</h1>
+          </main>
+    )
+    }
+    </>
 
   );
 }
