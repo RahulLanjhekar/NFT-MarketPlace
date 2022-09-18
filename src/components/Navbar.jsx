@@ -9,7 +9,7 @@ const Navbar = () => {
         <Link to="/"><li className="mx-4 cursor-pointer lg:text-xl text-lg font-light">Home</li></Link>       
         <Link to="/mint"><li className="mx-4 cursor-pointer lg:text-xl text-lg font-light">Mint NFT</li></Link>
         <Link to="/my-items"><li className="mx-4 cursor-pointer lg:text-xl text-lg font-light">Listed NFT</li></Link>
-        <Link to="/sold-nfts"><li className="mx-4 cursor-pointer lg:text-xl text-lg font-light">Bought NFT</li></Link>
+        <Link to="/sold-nfts"><li className="mx-4 cursor-pointer lg:text-xl text-lg font-light">Sold NFT</li></Link>
       </ul>
     </div>
   )

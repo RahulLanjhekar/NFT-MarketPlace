@@ -5,6 +5,7 @@ import Loader from './Loader'
 const ListedItems = ({accounts, marketPlace, setSoldItems}) => {
     const [loading, setLoading] = useState(true)
   const [listedItems, setListedItems] = useState([])
+  
   const loadListedItems = async () => {
     // Load all sold items that the user listed
     const itemCount = await marketPlace.itemCount()
